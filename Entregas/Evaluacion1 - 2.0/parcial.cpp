@@ -160,14 +160,14 @@ public:
 	{
 		srand (time(NULL));
 		int tag = rand() % 85015245 * rand() % 26354165;
-		/*for (int i = 0; i < usedTags->size(); i++)
+		for (int i = 0; i < usedTags.size(); i++)
 		{
-			if(tag==usedTags->at(i))
+			if(tag==usedTags.at(i))
 			{
 				tag = rand() % 85015245 * rand() % 26354165;
-				//i=0;
+				i=0;
 			}
-		}*/
+		}
 		usedTags.push_back(tag);
 		return tag;
 	}
@@ -187,15 +187,16 @@ public:
 class Warehouse
 {
 private:
-	static Warehouse* Instance;
 	Warehouse()
 	{
 		Instance = this;
+		cout<<"Size const: "<<inventory.size()<<endl;
 	}
+	static Warehouse* Instance;
 protected:
-	vector<Item> inventory;
-	vector<Item> undoDel;
+	vector<Item*> undoDel;
 public:
+	vector<Item*> inventory;
 	static Warehouse* create()
 	{
 		if (Instance==NULL)
@@ -207,28 +208,30 @@ public:
 	}
 	void addInventory(Videojuego* _game, int invn)
 	{
-		Item tmp2 = Item(_game);
-		std::cout<<"INVN: "<<invn<<endl;
-		for (int j = 0; j < invn; j++)
+		std::cout<<"1size: "<<inventory.size()<<endl;
+		//inventory.push_back(new Item(_game));
+		std::cout<<"2size: "<<inventory.size()<<endl;
+		//std::cout<<"Adding item "<<1<<" with tag: "<<tmp2.getTag()<<endl;
+		/*for (int j = 0; j < invn; j++)
 		{
 			inventory.push_back(tmp2);
 			std::cout<<"Adding item "<<j<<" with tag: "<<tmp2.getTag()<<endl;
 			tmp2 = Item(_game);
-		}
+		}*/
 	}
 	void getInventory()
 	{
 		std::cout<<inventory.size()<<" items in inventory"<<endl;
 		for (int i = 0; i < inventory.size(); i++)
 		{
-			std::cout<<i<<". Name:"<<inventory.at(i).getName()<<", Serial Number: "<<inventory.at(i).getTag()<<", Price: "<<inventory.at(i).getPrice();
+			std::cout<<i<<". Name:"<<inventory.at(i)->getName()<<", Serial Number: "<<inventory.at(i)->getTag()<<", Price: "<<inventory.at(i)->getPrice();
 		}
 	}
 	void deleteItem (int _tag)
 	{
 		for (int i = 0; i < inventory.size(); i++)
 		{
-			if(inventory.at(i).getTag()==_tag)
+			if(inventory.at(i)->getTag()==_tag)
 			{
 				undoDel.push_back(inventory.at(i));
 				inventory.erase(inventory.begin() + i);
@@ -244,9 +247,12 @@ public:
 	{
 		if (undoDel.size()==0)
 			cout<<"No items to restore"<<endl;
-		for (int i = 0; i < undoDel.size(); i++)
+		else
 		{
-			inventory.push_back(undoDel.at(i));
+			for (int i = 0; i < undoDel.size(); i++)
+			{
+				inventory.push_back(undoDel.at(i));
+			}
 		}
 		undoDel.clear();
 	}
@@ -261,13 +267,15 @@ void menuPrint()
 	cout<<"	1. Add games to inventory"<<endl;
 	cout<<"	2. Delete games from inventory"<<endl;
 	cout<<"	3. Undo deletion of last 3 elements"<<endl;
-	cout<<"	4. Quit"<<endl;
+	cout<<"	4. Display inventory"<<endl;
+	cout<<"	5. Quit"<<endl;
 }
 void menu()
 {
 	cout<<"Hector Mauricio Gonzalez Coello"<<endl;
 	int selection, s2, _tag = 0;
 	Warehouse* nw = Warehouse::create();
+	cout<<"Size main "<<nw->inventory.size()<<endl;
 	string _name = "HOLA";
 	float _price = 10.06;
 	Aprendizaje x = factoryMethod<Aprendizaje>(_name, _price);
@@ -296,6 +304,9 @@ void menu()
 	           	cin>>selection;
 	        	break;
 	        case 4:
+	        	nw->getInventory();
+	        	break;
+	        case 5:
 	        	selection=-1;
 	        	cout<<"Goodbye"<<endl;
 	        	break;  
