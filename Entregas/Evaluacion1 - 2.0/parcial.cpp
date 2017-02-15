@@ -134,15 +134,15 @@ public:
 	}
 };
 template <class VJ> 
-VJ* factoryMethod(string _name, float _price)
+VJ factoryMethod(string _name, float _price)
 {
 	std::cout<<"Ordenando creacion de videojuego "<<_name<<" y con precio "<<_price<<endl;
-	VJ* tmp = new VJ(_name, _price);
-    tmp->VJ::Concepcion();
-    tmp->VJ::Diseno();
-    tmp->VJ::Planificacion();
-    tmp->VJ::Produccion();
-    tmp->VJ::Prueba();
+	VJ tmp = VJ(_name, _price);
+    tmp.VJ::Concepcion();
+    tmp.VJ::Diseno();
+    tmp.VJ::Planificacion();
+    tmp.VJ::Produccion();
+    tmp.VJ::Prueba();
     return tmp;
 }
 class Item
@@ -270,7 +270,8 @@ void menu()
 	Warehouse* nw = Warehouse::create();
 	string _name = "HOLA";
 	float _price = 10.06;
-	Aprendizaje* x = factoryMethod<Aprendizaje>(_name, _price);
+	Aprendizaje x = factoryMethod<Aprendizaje>(_name, _price);
+	Videojuego* y = x.clone<Aprendizaje>();
 	menuPrint();
 	cin>>selection;
 	while(selection!=-1)
@@ -278,7 +279,7 @@ void menu()
 		switch(selection)
 	    {  
 	        case 1:
-	           	nw->addInventory(x->clone<Aprendizaje>(), 50);
+	           	nw->addInventory(y, 50);
 	           	menuPrint();
 	           	cin>>selection;
 	           	break;  
@@ -310,5 +311,4 @@ Warehouse* Warehouse::Instance = NULL;
 int main()
 {
 	menu();
-	//nw->getInventory();
 }
