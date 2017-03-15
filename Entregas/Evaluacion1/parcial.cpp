@@ -6,26 +6,39 @@
 
 
 using namespace std;
+vector<int> usedTags;
 
 class Videojuego
 {
-private:
+protected:
 	string a;
 	string b;
 	string c;
-	string d;
+	string name;
+	float price;
 public:
 	Videojuego ()
 	{
 		a="primer atributo";
 		b="segundo atributo";
 		c="tercer atributo";
-		d="cuarto atributo";
 	}
 	template <class VJ>
-	Videojuego* clonar()
+	Videojuego* clone()
 	{
         return new VJ(dynamic_cast <VJ&>(*this));
+	}
+	float getPrice()
+	{
+		return price;
+	}
+	void setPrice(float _price)
+	{
+		price = _price;
+	}
+	string getName()
+	{
+		return name;
 	}
 	virtual void Concepcion()=0;
 	virtual void Diseno ()=0;
@@ -35,12 +48,11 @@ public:
 };
 class Estrategia : public Videojuego
 {
-private:
-	string name;
 public:
-	Estrategia(string _name)
+	Estrategia(string _name, float _price)
     {
     	name = _name;
+    	price = _price;
     }
 	virtual void Concepcion()
 	{
@@ -65,12 +77,11 @@ public:
 };
 class Aventura : public Videojuego
 {
-private:
-	string name;
 public:
-	Aventura (string _name)
+	Aventura(string _name, float _price)
     {
     	name = _name;
+    	price = _price;
     }
 	virtual void Concepcion()
 	{
@@ -95,12 +106,11 @@ public:
 };
 class Aprendizaje : public Videojuego
 {
-private:
-	string name;
 public:
-	Aprendizaje(string _name)
+	Aprendizaje(string _name, float _price)
     {
     	name = _name;
+    	price = _price;
     }
 	virtual void Concepcion()
 	{
@@ -124,97 +134,196 @@ public:
 	}
 };
 template <class VJ> 
-VJ* factoryMethod(string _name)
+VJ factoryMethod(string _name, float _price)
 {
-	VJ* tmp = new VJ(_name);
-    tmp->VJ::Concepcion();
-    tmp->VJ::Diseno();
-    tmp->VJ::Planificacion();
-    tmp->VJ::Produccion();
-    tmp->VJ::Prueba();
+	std::cout<<"Ordenando creacion de videojuego "<<_name<<" y con precio "<<_price<<endl;
+	VJ tmp = VJ(_name, _price);
+    tmp.VJ::Concepcion();
+    tmp.VJ::Diseno();
+    tmp.VJ::Planificacion();
+    tmp.VJ::Produccion();
+    tmp.VJ::Prueba();
     return tmp;
 }
-template <class item>
 class Item
 {
-private:
-	item * itm;
+protected:
 	int tag;
-	float price;
+	Videojuego* game;
 public:
-	Item (string _name, float _price, int _tag)
+	Item(Videojuego* _game)
 	{
-		cout<<"Creating new Inventory item with tag: "<<_tag<<" and price: "<<_price<<endl;
-		itm = factoryMethod<item>(_name);
-		price=_price;
-		tag=_tag;
+		tag = generateTag();
+		game = _game;
 	}
-	item* getItem()
+	int generateTag()
 	{
-		return itm;
-	}
-	float getPrice()
-	{
-		return price();
-	}
-	void setPrice(float _price)
-	{
-		price=_price;
+		int tag = rand() % 85015245 * rand() % 26354165;
+		for (int i = 0; i < usedTags.size(); i++)
+		{
+			if(tag==usedTags.at(i))
+			{
+				tag = rand() % 85015245 * rand() % 26354165;
+				i=0;
+			}
+		}
+		usedTags.push_back(tag);
+		return tag;
 	}
 	int getTag()
 	{
 		return tag;
 	}
+	float getPrice()
+	{
+		return game->getPrice();
+	}
+	string getName()
+	{
+		return game->getName();
+	}
 };
-class Inventario
+class Warehouse
 {
 private:
-	vector<Item<Videojuego*>* > inv;
-	Inventario()
+	Warehouse()
 	{
 		Instance = this;
+		cout<<"Size const: "<<inventory.size()<<endl;
+		newV = new vector<Item*>;
 	}
-	static Inventario* Instance;
+	static Warehouse* Instance;
+protected:
+	vector<Item*> undoDel;
+	vector<Item*> inventory;
+	vector<Item*>* newV;
 public:
-	static Inventario* crear()
+	static Warehouse* create()
 	{
-		if(Instance==NULL)
+		if (Instance==NULL)
 		{
-			Inventario();
-			return Instance;
+			Warehouse();
+			Warehouse* w = new Warehouse();
 		}
 		return Instance;
 	}
-	int generateTag()
+	void addInventory(Videojuego* _game, int invn)
 	{
-		srand (time(NULL));
-		int tag = rand() % 10000;
-		for (int i = 0; i < inv.size(); i++)
+		Item* tmp2 = new Item(_game);
+		inventory.push_back(tmp2);
+		std::cout<<"Adding item "<<1<<" with tag: "<<tmp2->getTag()<<endl;
+		for (int j = 1; j < invn; j++)
 		{
-			if(inv.at(i)->getTag()==tag)
-				tag=rand() % 10000;
+			tmp2 = new Item(_game);
+			inventory.push_back(tmp2);
+			std::cout<<"Adding item "<<j+1<<" with tag: "<<tmp2->getTag()<<endl;
 		}
-		return tag;
 	}
-	void AddItem(string type, string _name, float _price)
+	void getInventory()
 	{
-		int _tag = generateTag();
-		if(type=="Estrategia")
-			inv.push_back(new Item<Estrategia*>(_name, _price, _tag));
-		else if(type=="Aventura")
-			inv.push_back(new Item<Aventura*>(_name, _price, _tag));
-		else if (type=="Aprendizaje")
-			inv.push_back(new Item<Aprendizaje*>(_name, _price, _tag));
+		std::cout<<inventory.size()<<" items in inventory"<<endl;
+		for (int i = 0; i < inventory.size(); i++)
+		{
+			std::cout<<i<<". Name:"<<inventory[i]->getName()<<", Serial Number: "<<inventory[i]->getTag()<<", Price: "<<inventory[i]->getPrice()<<std::endl;
+		}
+	}
+	void deleteItem (int _tag)
+	{
+		for (int i = 0; i < inventory.size(); i++)
+		{
+			if(inventory.at(i)->getTag()==_tag)
+			{
+				std::cout<<"found!"<<std::endl;
+				undoDel.push_back(inventory.at(i));
+				inventory.erase(inventory.begin() + i);
+			}
+			if (undoDel.size()>3)
+			{
+				undoDel.erase(undoDel.begin());
+			}
+		}
+	}
+	void restoreItem()
+	{
+		if (undoDel.size()==0)
+			cout<<"No items to restore"<<endl;
+		else
+		{
+			for (int i = 0; i < undoDel.size(); i++)
+			{
+				std::cout<<"Restoring item with tag: "<<undoDel.at(i)->getTag()<<std::endl;
+				inventory.push_back(undoDel.at(i));
+			}
+		}
+		undoDel.clear();
 	}
 
 };
-
-int main()
+void addGame(Warehouse** inv)
 {
+
+}
+void menuPrint()
+{
+	cout<<"	1. Add games to inventory"<<endl;
+	cout<<"	2. Delete games from inventory"<<endl;
+	cout<<"	3. Undo deletion of last 3 elements"<<endl;
+	cout<<"	4. Display inventory"<<endl;
+	cout<<"	5. Quit"<<endl;
+}
+void menu()
+{
+	cout<<"Hector Mauricio Gonzalez Coello"<<endl;
+	int selection, s2, _tag = 0;
+	Warehouse* nw = Warehouse::create();
+	//cout<<"Size main "<<nw->inventory.size()<<endl;
 	string _name = "HOLA";
 	float _price = 10.06;
-	int _tag = 465456;
-    Item<Estrategia>* e = new Item<Estrategia>(_name, _price, _tag);
-
-    return 1;
+	Aprendizaje x = factoryMethod<Aprendizaje>(_name, _price);
+	Videojuego* y = x.clone<Aprendizaje>();
+	menuPrint();
+	cin>>selection;
+	while(selection!=-1)
+	{
+		switch(selection)
+	    {  
+	        case 1:
+	           	nw->addInventory(y, 50);
+	           	menuPrint();
+	           	cin>>selection;
+	           	break;  
+	        case 2:
+	        	cout<<"Give me the tag to delete"<<endl;
+	        	cin>>_tag;
+	        	nw->deleteItem(_tag);
+	        	menuPrint();
+	           	cin>>selection;
+	           	break;
+	        case 3:
+	        	nw->restoreItem();
+	        	menuPrint();
+	           	cin>>selection;
+	        	break;
+	        case 4:
+	        	nw->getInventory();
+	        	menuPrint();
+	        	cin>>selection;
+	        	break;
+	        case 5:
+	        	selection=-1;
+	        	cout<<"Goodbye"<<endl;
+	        	break;  
+	        default:
+	        	cout<<"Invalid selection"<<endl;
+	           	menuPrint();
+	           	cin>>selection;
+	           	break;  
+	    }
+    }  	
+}
+Warehouse* Warehouse::Instance = NULL;
+int main()
+{
+	srand (time(NULL));
+	menu();
 }
