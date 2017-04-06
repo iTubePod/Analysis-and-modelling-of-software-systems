@@ -24,16 +24,16 @@ int main()
 	worldInternet->addDNS("UNITED STATES");
 	worldInternet->addDNS("RUSSIA");
 	worldInternet->addDNS("EUROPE");
-	worldInternet->getDNS(0)->addDomain(ausSites1);
-	worldInternet->getDNS(0)->addDomain(ausSites2);
-	worldInternet->getDNS(1)->addDomain(LATAMSites1);
-	worldInternet->getDNS(1)->addDomain(LATAMSites2);
-	worldInternet->getDNS(2)->addDomain(USSites1);
-	worldInternet->getDNS(2)->addDomain(USSites2);
-	worldInternet->getDNS(3)->addDomain(RUSSites1);
-	worldInternet->getDNS(3)->addDomain(RUSSites2);
-	worldInternet->getDNS(4)->addDomain(EURSites1);
-	worldInternet->getDNS(4)->addDomain(EURSites2);
-	worldInternet->getDNS(0)->Resolution("www.j.com", worldInternet->getAll());
+	worldInternet->getDNS(0).addDomain(ausSites1);
+	worldInternet->getDNS(0).addDomain(ausSites2);
+	worldInternet->getDNS(1).addDomain(LATAMSites1);
+	worldInternet->getDNS(1).addDomain(LATAMSites2);
+	worldInternet->getDNS(2).addDomain(USSites1);
+	worldInternet->getDNS(2).addDomain(USSites2);
+	worldInternet->getDNS(3).addDomain(RUSSites1);
+	worldInternet->getDNS(3).addDomain(RUSSites2);
+	worldInternet->getDNS(4).addDomain(EURSites1);
+	worldInternet->getDNS(4).addDomain(EURSites2);
+	worldInternet->getDNS(0).Resolution("www.j.com", worldInternet->getAll());
 	std::cin >> x;
 }

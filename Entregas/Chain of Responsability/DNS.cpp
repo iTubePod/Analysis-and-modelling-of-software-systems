@@ -12,15 +12,15 @@ DNS* DNS::getInstance()
 void DNS::addDNS(std::string _newDNS)
 {
 	Countries tmp = Countries(_newDNS, worldDNS.size());
-	worldDNS.push_back(&tmp);
+	worldDNS.push_back(tmp);
 }
 
-Countries * DNS::getDNS(int pos)
+Countries DNS::getDNS(int pos)
 {
 	return worldDNS.at(pos);
 }
 
-std::vector<Countries*>* DNS::getAll()
+std::vector<Countries>* DNS::getAll()
 {
 	return &worldDNS;
 }

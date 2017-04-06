@@ -7,7 +7,7 @@
 class DNS
 {
 private:
-	std::vector<Countries*> worldDNS;
+	std::vector<Countries> worldDNS;
 protected:
 	DNS()
 	{
@@ -17,7 +17,7 @@ protected:
 public:
 	static DNS* getInstance();
 	void addDNS(std::string _newDNS);
-	Countries* getDNS(int pos);
-	std::vector<Countries*>* getAll();
+	Countries getDNS(int pos);
+	std::vector<Countries>* getAll();
 };
 

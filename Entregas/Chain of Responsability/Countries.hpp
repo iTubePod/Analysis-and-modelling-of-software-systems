@@ -13,6 +13,6 @@ public:
 	~Countries();
 	void addDomain(IP _newDomain);
 	void setPlace(int _place);
-	std::string Resolution(std::string domain, std::vector<Countries*>* worldDNS);
+	std::string Resolution(std::string domain, std::vector<Countries>* worldDNS);
 };
 
